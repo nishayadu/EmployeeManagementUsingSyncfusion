@@ -1,0 +1,115 @@
+
+<br/>
+<br/>
+<div class="container-fluid" style="width:1200px;">
+ 
+  <div class="row">
+    <div class="col-sm-4" style="background-color:lavenderblush;height:30px;"></div>
+    <div class="col-sm-4" style="background-color:lavenderblush;height:30px;"><strong><p style="font-size:18px;">EMPLOYEE MANAGEMENT SYSTEM</p></strong></div>
+    <div class="col-sm-4" style="background-color:lavenderblush;height:30px;">
+      <i style="margin-top:10px; margin-left:300px;" class="fa fa-book pointer" aria-hidden="true" (click)="getactivity($event)" ></i>
+      <i  id="addemployee" style="margin-top:10px;" title="Add Employee" class="fa fa-plus pointer pull-right" aria-hidden="true"  (click)="onClick($event); "></i>
+      <i style="margin-left: 30px;" class="fa fa-refresh pointer" aria-hidden="true" (click)="getEmployees()" ></i> 
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid" style="width:1200px;">
+<div id="employeeTemplate">
+    <span class="e-userlogin e-icon headericon"></span>
+      EMPLOYEE NAME
+ </div>
+ 
+<ej-grid id="Grid" [dataSource]="employee"  [allowPaging]="true" [enableRowHover]="true" [allowSorting]="true"  [allowSearching]="true" [toolbarSettings]="toolbarItems" [editSettings]="editSettings"  (toolbarClick)="toolbar($event)" [groupSettings] = "groupSettings">
+  <e-columns>
+    
+      <e-column field="employee_id"  headerText="EMPLOYEE ID"  textAlign="center" [isPrimaryKey]="true"></e-column>
+     <e-column field="ename" headerText="EMPLOYEE NAME" headerTemplateID= "#employeeTemplate" textAlign="center">
+      <ng-template e-template let-data>
+          <a href='#' (click)="selectItem(data.employee_id)">{{data.ename}}</a>
+       </ng-template>
+    </e-column>
+      <e-column field="designation" headerText="DESIGNATION"  textAlign="center"></e-column>
+      <e-column field="department"   headerText="DEPARTMENT" textAlign="center" editType="dropdownedit"></e-column>
+      <e-column field="salary" headerText="SALARY"   textAlign="center" format="{0:C4}"></e-column>
+      <e-column headerText="ACTION" textAlign="center">
+          <ng-template  e-template let-data>
+           &nbsp;&nbsp;&nbsp;<i class="fa fa-trash pointer" (click)="clickdelete(data.employee_id)" aria-hidden="true"></i>
+          </ng-template>
+      </e-column>
+  </e-columns>
+</ej-grid> 
+</div>
+
+<!-- EJ-Dialog for Add Employee Starts Here-->
+<div class="container-fluid">
+  <ej-dialog id="dialog" #dialog width="600" text-align="center" title="Add New Employee" [enableModal]="enablemodal"  [isResponsive]="responsive"  [actionButtons]="actionbuttons" [htmlAttributes]="htmlattributes" [showOnInit]="false">
+    <form class="form-horizontal" #formadd="ngForm">
+    <div class="form-group ">
+      <label for="Employee Id" class="col-sm-4 control-label"><strong>Employee Id:</strong></label>
+        <div class="col-sm-4">
+        <input type="text" class="form-control" id="empid" [appHighlight]="color" name="empid"    readonly [(ngModel)]="randomstring" >
+        </div>
+        
+    </div> 
+  
+    <div class="form-group ">
+      <label for="Employee Name" class="col-sm-4 control-label"> <strong>Name:</strong></label>
+      <div class="col-sm-4">
+      <input type="text" class="form-control" id="empname" name="empname" [appHighlight]="color"    minlength="3" [(ngModel)]="ename" #empname="ngModel" >
+      <span class="error" *ngIf="empname.invalid && (empname.dirty || empname.touched) ">Employee Name should be 3 character long.</span>
+      
+    </div>
+   </div> 
+
+  <div class="form-group">
+      <label for="Department"  class="col-sm-4 control-label"><strong>Department:</strong></label>
+      <div class="col-sm-4"> 
+        <input id="dropdown1" ej-dropdownlist [dataSource]="dept" [appHighlight]="color" [fields]="fieldsvalues" [(value)]="value" [(ngModel)]="value" #dropdown1="ngModel" required/>
+        <span class="error" *ngIf="dropdown1.invalid && (dropdown1.dirty || dropdown1.touched)">Employee Department is Required.</span>  
+    </div>
+  </div> 
+  <div class="form-group">
+      <label for="Designation"  class="col-sm-4 control-label"><strong>Designation:</strong></label>
+      <div class="col-sm-4">
+      <input type="text" class="form-control" id="empdes"  name="empdes" [appHighlight]="color"   required [(ngModel)]="designation" #empdes="ngModel" >
+      <span class="error" *ngIf="empdes.invalid && (empdes.dirty || empdes.touched) ">Employee Designation is Required</span>
+    </div>
+  </div> 
+  <div class="form-group">
+      <label for="Salary"  class="col-sm-4 control-label"><strong>Salary:</strong></label>
+      <div class="col-sm-4">
+      <input type="text" class="form-control" id="empsal"  name="empsal" [appHighlight]="color"   [(ngModel)]="salary" > 
+      
+    </div>
+  </div> 
+  <br/>
+  <button type="submit" #closeadd [disabled]="formadd.invalid" style="margin-left:210px;"  class="btn btn-success"  (click)="addemp()"  >Add</button>
+
+  <button type="button" class="btn btn-danger"  style="margin-left:20px;"  (click)="closeaddpopup($event)">Cancel</button>
+   </form>
+  </ej-dialog>
+  </div>
+  <!-- EJ-Dialog for Add Employee Ends Here-->
+
+  <!-- EJ-Dialog for Delete Employee Starts Here-->
+<div class="container-fluid">
+  <ej-dialog id="dialogdelete" #dialogdelete [showOnInit]="false" [htmlAttributes]="htmlattributes">
+      <p><strong> You Sure You Want to Delete Record of Employee with Id : {{saveid}}?</strong></p>
+      <button type="button" class="btn btn-success"  (click)="removeemp()" style="margin-left:210px;" >Yes</button>
+     
+  </ej-dialog>
+</div>
+<!-- EJ-Dialog for Delete Employee Ends Here-->
+
+<!-- EJ-Dialog for Activity log of Employee Starts Here-->
+ <div class="container-fluid">
+  <ej-dialog id="dialogactivity" #dialogactivity [showOnInit]="false" [htmlAttributes]="htmlattributes">
+      <p><strong> Activity Log for Employee Management</strong></p><br/>
+      <div *ngFor='let message of _activitylog.messages'> {{message}}  </div><br/>
+      <button type="button" class="btn btn-success" (click)="clickcloseactivity()" style="margin-left:210px;" >OK</button>
+      
+  </ej-dialog>
+</div>
+<!-- EJ-Dialog for Activity log of Employee Ends Here-->
+

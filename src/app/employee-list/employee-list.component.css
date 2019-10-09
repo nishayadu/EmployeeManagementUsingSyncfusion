@@ -1,0 +1,20 @@
+
+  .center_div{
+    margin: 0 auto;
+    width:40%;
+    border:1px solid;
+}
+.error
+{
+  color:red;
+  font-weight: bold;
+  font-size:12px;
+}
+.pointer {cursor: pointer;}
+
+.refresh:before {
+  content: "\e677";
+}
+.Collapse:before {
+  content: "\e625";
+}
